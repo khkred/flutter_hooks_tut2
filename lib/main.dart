@@ -7,7 +7,6 @@ void main() {
   );
 }
 
-Stream<String> getTime() => Stream.periodic(const Duration(seconds: 1),(_) => DateTime.now().toString());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,14 +25,32 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentTime = useStream(getTime());
+    final emailController = useTextEditingController();
+    final text = useState('');
+
+    useEffect((){
+      emailController.addListener((){
+        text.value = emailController.text;
+        print("New Text Value: ${text.value}");
+      });
+      return null;
+    },[emailController]);
 
     return  Scaffold(
-      appBar: AppBar(title:  Text(currentTime.data ?? ' '),
+      appBar: AppBar(title: const Text('Home Page'),),
+
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(controller: emailController,),
+            const SizedBox(height: 20,),
+            Text('You have typed: ${text.value}'),
+          ],
+        ),
       ),
-      body: const Center(
-        child: Text('Home Page'),
-      ),
+
     );
 
   }
